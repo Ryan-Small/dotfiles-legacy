@@ -1,0 +1,186 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible                " disable Vi compatibility
+
+set nobackup                    " disable automatic backups
+set nowritebackup               " write directly to the original file
+
+set clipboard=unnamed           " enable copy & paster to MAC clipboard
+
+set backspace=indent,eol,start  " enable backspacing over everything in insert mode
+
+" enable the mouse if available
+if has('mouse')
+  set mouse=a
+endif
+
+" remap heavily used keys
+let mapleader="\\"
+imap jj <ESC>
+
+" Map VIM movements with split switching.
+map <C-H> <C-W>h
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-L> <C-W>l
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Theme/Colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set t_Co=256                " enable 256-color mode
+syntax enable               " enable syntax highlighting
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Vim UI
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set history=50              " keep 50 lines of command line history
+set numberwidth=4           " set the number gutter width
+set number                  " show line number
+set cul                     " highlight the current line
+set nohlsearch              " don't continue to highlight searched phrases
+set incsearch               " do highlight as search is being typed
+set ignorecase              " make searches case-insensitive
+set showmatch               " highlight the matching brace
+set visualbell              " use the visual indicator instead of a sound
+set ruler                   " show info along bottom
+set showcmd	                " display incomplete commands
+set relativenumber          " turn hybrid line numbers on
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Text Formatting/Layout
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set softtabstop=4           " insert/delete x spaces on TAB/BACKSPACE
+set shiftwidth=4            " << and >> moves row x columns
+set tabstop=4               " a hard TAB displays as x columns
+set shiftround              " round indent to multiple of 'shiftwidth'
+set smartindent             " automatically inserts extra level of indentation
+set expandtab               " insert spaces when hitting TABs
+set autoindent              " auto indent new lines
+set nowrap                  " stop wrapping by default
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Plugins
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call plug#begin('~/.vim/plugged')
+
+Plug 'flazz/vim-colorschemes'
+
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ryanoasis/vim-devicons'
+
+Plug 'scrooloose/nerdcommenter'
+Plug 'airblade/vim-gitgutter'
+
+Plug 'junegunn/fzf'
+
+Plug 'edkolev/tmuxline.vim'
+Plug 'christoomey/vim-tmux-navigator'
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+Plug 'valloric/youcompleteme', { 'do': './install.py' }
+
+" Python Specific
+Plug 'python-mode/python-mode', { 'for': 'python' }
+Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+
+call plug#end()
+
+" VIM-COLORSCHEMES """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" colorscheme molokai
+colorscheme busybee
+" colorscheme iceberg
+" colorscheme impact
+" colorscheme obsidian
+" colorscheme sorcerer
+" colorscheme twilight256
+" colorscheme distinguished
+
+" NERDTREE """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDTreeDirArrowExpandable='▸'
+let g:NERDTreeDirArrowCollapsible='▾'
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '__pycache__', '\.swp$']
+let NERDTreeShowBookmarks=1
+map <F3> :NERDTreeToggle<CR>
+map <F15> :NERDTreeFind<CR>
+
+" close vim if only NERDTree is open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" DEVICONS """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:webdevicons_enable_nerdtree=1
+let g:webdevicons_enabl=1
+let g:WebDevIconsNerdTreeAfterGlyphPadding=' '
+
+" NERDCOMMENTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDSpaceDelims=1
+
+" VIM-GITGUTTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:gitgutter_enabled =1
+
+" FZF """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <C-p> :<C-u>FZF<CR>
+let $FZF_DEFAULT_COMMAND='git ls-files'
+
+" AIRLINE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline#extensions#tmuxline#enabled=0
+let g:airline_theme="powerlineish"
+" let g:airline_theme="hybridline"
+" let g:airline_theme="ravenpower"
+
+" YOUCOMPLETEME """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ycm_python_binary_path='/usr/local/bin/python3'
+let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_seed_identifiers_with_syntax=1
+let g:ycm_complete_in_comments=1
+let g:ycm_complete_in_strings=1
+
+nnoremap <leader>jd :YcmCompleter GoTo<CR>
+
+" PYTHON-MODE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:pymode_python='python3'
+let g:pymode_lint_write=0
+let g:pymode_rope_completion=0
+set nofoldenable
+
+" JEDI-VIM """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:jedi#force_py_version=3
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Python Specific
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd bufreadpre *.py setlocal textwidth=79
+"autocmd BufWritePost *.py call Pyflakes()
+"autocmd BufWritePost *.py call Pep8()
+
+nnoremap <buffer> <F5> :exec '!venv/bin/python' shellescape(@%, 1)<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Custom Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" highlight the wraparound column
+if exists('+colorcolumn')
+  autocmd bufreadpre *.py set colorcolumn=79
+  autocmd bufreadpre *.py highlight ColorColumn ctermbg=234
+endif
+
+" When editing a file, always jump to the last known cursor position.
+" Don't do it when the position is invalid or when inside an event handler
+" (happens when dropping a file on gvim). Also don't do it when the mark is in
+" the first line, that is the default position when opening a file.
+autocmd BufReadPost *
+  \ if line("'\"") > 1 && line("'\"") <= line("$") |
+  \   exe "normal! g`\"" |
+  \ endif
+
+" set the syntax highlighting for the various extensions
+au BufNewFile,BufRead *.gradle setf groovy
+

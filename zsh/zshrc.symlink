@@ -1,0 +1,84 @@
+# Create a shortcut to the dotfiles directory.
+export ZSH=$HOME/.dotfiles
+
+#
+# Bootstrap all of configurations.
+#
+
+# Stash private environment variables in ~/.localrc.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
+
+# Collect all of our .zsh files throughout the directories.
+typeset -U config_files
+config_files=($ZSH/**/*.zsh)
+
+# Load the path files.
+for file in ${(M)config_files:#*/path.zsh}
+do
+  source $file
+done
+
+# Load everything but the path and completion files.
+for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
+do
+  source $file
+done
+
+# Initialize autocomplete here, otherwise functions won't be loaded.
+autoload -U compinit
+compinit
+
+# Load completion files.
+for file in ${(M)config_files:#*/completion.zsh}
+do
+  source $file
+done
+
+# Unload the configuration files.
+unset config_files
+
+
+#
+# ZSH Configurations
+#
+
+# Get some color going.
+export LSCOLORS="exfxcxdxbxegedabagacad"
+export CLICOLOR=true
+
+# Manage History
+HISTFILE=~/.zsh_history
+HISTSIZE=100
+SAVEHIST=100
+
+setopt APPEND_HISTORY        # keep history
+setopt INC_APPEND_HISTORY    # update the history after execution (not end of session)
+setopt SHARE_HISTORY         # share history between sessions if we have multiple going 
+setopt EXTENDED_HISTORY      # add timestamps to history
+setopt HIST_IGNORE_ALL_DUPS  # don't record dupes in history
+setopt HIST_REDUCE_BLANKS    # remove extra blank space
+
+setopt LOCAL_OPTIONS         # allow functions to have local options
+setopt LOCAL_TRAPS           # allow functions to have local traps
+
+setopt NO_LIST_BEEP          # stop beeping at me
+setopt CORRECT               # may I make a suggestion
+setopt COMPLETE_IN_WORD      # move cursor to the end of the word if completed
+setopt IGNORE_EOF
+
+setopt complete_aliases      # don't expand aliases before completion has finished
+
+bindkey '^r' history-incremental-search-backward     # ctrl + r
+
+bindkey '^[[1;2D' backward-word         # ctrl + left arrow
+bindkey '^[[1;2C' forward-word          # ctrl + right arrow
+bindkey "^[[1~" beginning-of-line       # ctrl + home
+bindkey '^[[1;10D' beginning-of-line    # ctrl + shift + left arrow
+bindkey "^[[4~" end-of-line             # ctrl + end
+bindkey '^[[1;10C' end-of-line          # ctrl + shift + right arrow
+bindkey '^[[3~' delete-char             # fn + delete
+bindkey '^?' backward-delete-char       # delete
+

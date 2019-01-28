@@ -1,0 +1,9 @@
+# Vim
+.swp
+
+# Folder View
+.DS_Store
+
+# Files that may appear on external disks
+.Spotlight-V100
+.Trashes

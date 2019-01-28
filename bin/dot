@@ -1,0 +1,218 @@
+#!/bin/sh
+
+#
+# This script will configure the Git identity and symbolically link all of the appropriate files. 
+# Specifically, it will look at each subdirectory for files ending in .symlink and link them in the
+# home directory. It will then run any install.sh files.
+#
+
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+
+# Move to the root directory
+cd "$(dirname "$0")/.."
+
+
+# Strings for formatting output
+PROMPT_OK=$'  [ \033[00;32mOK\033[0m ]'
+PROMPT_FAIL=$'  [\033[0;31mFAIL\033[0m]'
+PROMPT_INFO=$'  [ \033[00;34m..\033[0m ]'
+PROMPT_USER=$'  [ \033[00;33m??\033[0m ]'
+
+
+# Primary entry point for the script.
+main () {
+
+  # Check if a git identity has already been created.
+  if ! [ -f git/gitconfig.local.symlink ]
+  then
+    printf "${PROMPT_INFO} - Git Identity Initializing\n"
+    initialize_git_identity
+    printf "${PROMPT_OK} - Git Identity Initialized\n"
+  else
+    printf "${PROMPT_OK} - Git Identity Already Initialized\n"
+  fi
+
+  # Link all of the Dotfiles.
+  printf "${PROMPT_INFO} - Installing Dotfiles\n"
+  install_dotfiles
+  printf "${PROMPT_OK} - Installed Dotfiles\n"
+
+  # Set some defaults if we are on a Mac.
+  if test "$(uname)" = "Darwin"
+  then
+    printf "${PROMPT_INFO} - Configuring Defaults for Mac\n"
+    bin/set-macos-defaults.sh
+    printf "${PROMPT_OK} - Configured Defaults for Mac\n"
+  fi
+
+  # Does Homebrew need to be installed?
+  if ! [ $(which brew) ]
+  then
+    printf "${PROMPT_INFO} - Installing Homebrew\n"
+    install_homebrew
+    printf "${PROMPT_OK} - Installed Homebrew\n"
+  else
+    printf "${PROMPT_OK} - Homebrew Already Installed\n"
+  fi
+  
+  # Find the installers and run them iteratively.
+  printf "${PROMPT_INFO} - Running Installers\n"
+  find . -name install.sh | while read installer ; do printf "${PROMPT_INFO} - Executing ${installer}\n" ; sh -c "${installer}" ; done
+  printf "${PROMPT_OK} - Completed Installers\n"
+
+  # Update Homebrew and install any dependencies list in the 'Brewfile'.
+  printf "${PROMPT_INFO} - Updating Brew\n"
+  brew bundle
+  printf "${PROMPT_OK} - Updated Brew\n"
+
+  # Switch to the zsh shell if needed.
+  if ! [ $SHELL == "/bin/zsh" ] 
+  then
+    printf "${PROMPT_OK} - Setting ZSH As Default Shell\n"
+    if ! [ $(which zsh) ]
+    then
+        chsh -s /bin/zsh
+    else
+        printf "${PROMPT_FAIL} - ZSH Not Available\n"
+    fi
+  fi
+  
+  printf "${PROMPT_OK} - Initialized Dotfiles\n"
+}
+
+
+#
+# Injects the user's provided identify into a git/gitconfig.local.symlink file using the 
+# git/gitconfig.template as a template.
+#
+initialize_git_identity () {
+    # Get some information from the user.
+    read -p "${PROMPT_USER} - Git Author Name: " git_author_name
+    read -p "${PROMPT_USER} - Git Author E-Mail: " git_author_email
+
+    git_credential='cache'
+    if [ "$(uname -s)" == "Darwin" ]
+    then
+      git_credential='osxkeychain'
+    fi
+
+    # Create a new symlink file from the template.
+    sed -e "s/GIT_AUTHOR_NAME/$git_author_name/g" \
+	    -e "s/GIT_AUTHOR_EMAIL/$git_author_email/g" \
+	    -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" \
+	    ./git/gitconfig.template > ./git/gitconfig.local.symlink
+}
+
+
+#
+# Iterates through each of the directories looking for .symlink files and symbolically links them
+# to the home directory.
+#
+install_dotfiles () {
+  local overwrite_all=false
+  local backup_all=false
+  local skip_all=false
+
+  # Iterate over all directories in our dotfiles root  looking for .symlink files.
+  for src in $(find -H "$(pwd -P)" -maxdepth 2 -name '*.symlink' -not -path '*.git*')
+  do
+    dst="$HOME/.$(basename "${src%.*}")"
+    link_file "$src" "$dst"
+  done
+}
+
+
+#
+# Does the actual linking of two files and provides the user with options if a file already exists
+# in the home directory with the same name.
+#
+link_file () {
+  local src=$1 dst=$2
+  local overwrite= backup= skip=
+  local action=
+
+  # If the file exists and is readable, a directory, or a symbolic link...
+  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
+  then
+
+    # Have we already specified some master override option.
+    if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
+    then
+
+      # Is the file already linked correctly?
+      if [ "$(readlink $dst)" == "$src" ]
+      then
+        skip=true;
+      else
+
+        read -n 1 -p "${PROMPT_USER} - File already exists: $dst ($(basename "$src")) - [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all:" action
+	    printf "\n"
+
+	    case "$action" in
+          o )
+            overwrite=true;;
+          O )
+            overwrite_all=true;;
+          b )
+            backup=true;;
+          B )
+            backup_all=true;;
+          s )
+            skip=true;;
+          S )
+            skip_all=true;;
+          * )
+            ;;
+        esac
+      fi
+    fi
+
+    overwrite=${overwrite:-$overwrite_all}
+    backup=${backup:-$backup_all}
+    skip=${skip:-$skip_all}
+
+    if [ "$overwrite" == "true" ]
+    then
+      rm -rf "$dst"
+      printf "${PROMPT_OK} - Removed ${dst}\n"
+    fi
+
+    if [ "$backup" == "true" ]
+    then
+      # TODO: Check if a backup file already exists.
+      mv "$dst" "${dst}.backup"
+      printf "${PROMPT_OK} - Moved ${dst} to ${dst}.backup\n"
+    fi
+
+    if [ "$skip" == "true" ]
+    then
+      printf "${PROMPT_OK} - Skipping ${src}\n"
+    fi
+  fi
+
+  if [ "$skip" != "true" ]
+  then
+    ln -s "$1" "$2"
+    printf "${PROMPT_OK} - linked ${1} to ${2}\n"
+  fi
+}
+
+#
+# Install Homebrew if needed. 
+#
+install_homebrew () {
+  # Are we running on Mac or Linux?
+  if test "$(uname)" = "Darwin"
+  then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
+  then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
+  fi
+}
+ 
+main
+
