@@ -1,16 +1,9 @@
 # Dotfiles
 
-The structure of these Dotfiles are based on [Holman dotfiles](https://github.com/holman/dotfiles/).
+These Dotfiles are based on [Holman dotfiles](https://github.com/holman/dotfiles/).
 
 
-## TODO
-
-- Auto-Complete has issues. e.g. docker-compo<tab>
-- Panel jumping with Vim. e.g. switching between two panels - one with vim open and NerdBookmarks is open
-- Automate the Afterwards steps.
-
-
-## Strcture
+## Structure
 
 Everthing's built around topic areas. Each directory is a topic. 
 
@@ -36,10 +29,15 @@ cd ~/.dotfiles
 ```
 
 
+## Updating
+
+Run ```./bin/dot``` to update dependencies from time-to-time.
+
+
 ## Afterwards
 
-iterm2 -> preferences -> profile -> general -> "Send text at start:" `tmux attach -t base || tmux new -s base`
-iterm2 -> preferences -> profiles -> colors -> Color Presets -> Import -> ~/.iterm2-color-schemes
-iterm2 -> preferences -> profiles -> text -> Some Powerline font
-Spectacle -> Map "Left Half" to "Alt+CMD+LEFT_ARROW" and "Right Half" to "Alt+CMD+RIGHT_ARROW"
+- iterm2 -> preferences -> profile -> general -> "Send text at start:" `tmux attach -t base || tmux new -s base`
+- iterm2 -> preferences -> profiles -> colors -> Color Presets -> Import -> ~/.iterm2-color-schemes
+- iterm2 -> preferences -> profiles -> text -> Some Powerline font
+- Spectacle -> Map "Left Half" to "Alt+CMD+LEFT_ARROW" and "Right Half" to "Alt+CMD+RIGHT_ARROW"
 
