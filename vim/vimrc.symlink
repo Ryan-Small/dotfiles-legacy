@@ -25,17 +25,11 @@ map <C-J> <C-W>j
 map <C-K> <C-W>k
 map <C-L> <C-W>l
 
+noremap + <PageDown>
+noremap - <PageUp>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  Theme/Colors
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set t_Co=256                " enable 256-color mode
 syntax enable               " enable syntax highlighting
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  Vim UI
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set t_Co=256                " enable 256-color mode
 set history=50              " keep 50 lines of command line history
 set numberwidth=4           " set the number gutter width
 set number                  " show line number
@@ -48,11 +42,6 @@ set visualbell              " use the visual indicator instead of a sound
 set ruler                   " show info along bottom
 set showcmd	                " display incomplete commands
 set relativenumber          " turn hybrid line numbers on
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  Text Formatting/Layout
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set softtabstop=4           " insert/delete x spaces on TAB/BACKSPACE
 set shiftwidth=4            " << and >> moves row x columns
 set tabstop=4               " a hard TAB displays as x columns
@@ -62,115 +51,25 @@ set expandtab               " insert spaces when hitting TABs
 set autoindent              " auto indent new lines
 set nowrap                  " stop wrapping by default
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  Plugins
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-call plug#begin('~/.vim/plugged')
-
-Plug 'flazz/vim-colorschemes'
-
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'ryanoasis/vim-devicons'
-
-Plug 'scrooloose/nerdcommenter'
-Plug 'airblade/vim-gitgutter'
-
-Plug 'junegunn/fzf'
-
-Plug 'edkolev/tmuxline.vim'
-Plug 'christoomey/vim-tmux-navigator'
-
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-Plug 'valloric/youcompleteme', { 'do': './install.py' }
-
-" Python Specific
-Plug 'python-mode/python-mode', { 'for': 'python' }
-Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-
-call plug#end()
-
-" VIM-COLORSCHEMES """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" colorscheme molokai
-colorscheme busybee
-" colorscheme iceberg
-" colorscheme impact
-" colorscheme obsidian
-" colorscheme sorcerer
-" colorscheme twilight256
-" colorscheme distinguished
-
-" NERDTREE """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDTreeDirArrowExpandable='▸'
-let g:NERDTreeDirArrowCollapsible='▾'
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '__pycache__', '\.swp$']
-let NERDTreeShowBookmarks=1
-map <F3> :NERDTreeToggle<CR>
-map <F15> :NERDTreeFind<CR>
-
-" close vim if only NERDTree is open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" DEVICONS """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:webdevicons_enable_nerdtree=1
-let g:webdevicons_enabl=1
-let g:WebDevIconsNerdTreeAfterGlyphPadding=' '
-
-" NERDCOMMENTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDSpaceDelims=1
-
-" VIM-GITGUTTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:gitgutter_enabled =1
-
-" FZF """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <C-p> :<C-u>FZF<CR>
-let $FZF_DEFAULT_COMMAND='git ls-files'
-
-" AIRLINE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline#extensions#tmuxline#enabled=0
-let g:airline_theme="powerlineish"
-" let g:airline_theme="hybridline"
-" let g:airline_theme="ravenpower"
-
-" YOUCOMPLETEME """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ycm_python_binary_path='/usr/local/bin/python3'
-let g:ycm_collect_identifiers_from_tags_files=1
-let g:ycm_seed_identifiers_with_syntax=1
-let g:ycm_complete_in_comments=1
-let g:ycm_complete_in_strings=1
-
-nnoremap <leader>jd :YcmCompleter GoTo<CR>
-
-" PYTHON-MODE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:pymode_python='python3'
-let g:pymode_lint_write=0
-let g:pymode_rope_completion=0
-set nofoldenable
-
-" JEDI-VIM """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:jedi#force_py_version=3
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  Python Specific
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <buffer> <F5> :exec '!venv/bin/python' shellescape(@%, 1)<cr>
 autocmd bufreadpre *.py setlocal textwidth=79
 "autocmd BufWritePost *.py call Pyflakes()
 "autocmd BufWritePost *.py call Pep8()
-
-nnoremap <buffer> <F5> :exec '!venv/bin/python' shellescape(@%, 1)<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  Custom Commands
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " highlight the wraparound column
 if exists('+colorcolumn')
   autocmd bufreadpre *.py set colorcolumn=79
   autocmd bufreadpre *.py highlight ColorColumn ctermbg=234
 endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Custom Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " When editing a file, always jump to the last known cursor position.
 " Don't do it when the position is invalid or when inside an event handler
@@ -183,4 +82,109 @@ autocmd BufReadPost *
 
 " set the syntax highlighting for the various extensions
 au BufNewFile,BufRead *.gradle setf groovy
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"  Plugins
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Automatically install plug, if needed.
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'flazz/vim-colorschemes'
+
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
+Plug 'scrooloose/nerdcommenter'
+
+Plug 'airblade/vim-gitgutter'
+Plug 'edkolev/tmuxline.vim'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'rstacruz/vim-closer'
+Plug 'easymotion/vim-easymotion'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"CocInstall coc-tsserver coc-eslint coc-json coc-prettier coc-css coc-angular coc-highlight coc-html coc-java coc-python
+
+Plug 'Shougo/echodoc.vim'
+
+call plug#end()
+
+
+" VIM-COLORSCHEMES """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" colorscheme molokai
+colorscheme busybee
+" colorscheme iceberg
+" colorscheme impact
+" colorscheme obsidian
+" colorscheme sorcerer
+" colorscheme twilight256
+" colorscheme distinguished
+
+
+" NERDTREE """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F3> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable='▸'
+let g:NERDTreeDirArrowCollapsible='▾'
+let NERDTreeShowBookmarks=1
+let g:NERDTreeShowHidden=1
+let g:NERDTreeMinimalUI=1
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '__pycache__', '\.swp$', '^\.DS_Store$', '\.git$[[dir]]', '\.idea$[[dir]]', '\.sass-cache$']
+
+" close vim if only NERDTree is open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" COC """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <silent> <leader>dd <Plug>(coc-definition)
+nmap <silent> <leader>dr <Plug>(coc-references)
+nmap <silent> <leader>dj <Plug>(coc-implementation)
+nnoremap <silent> <leader>ds :<C-u>CocList -I -N --top symbols<CR>
+
+" use <tab> for trigger completion and navigate to next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+"Close preview window when completion is done.
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+
+" VIM-BETTER-WHITESPACE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader>y :StripWhitespace<CR>
+
+" DEVICONS """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:webdevicons_enable_nerdtree=1
+let g:webdevicons_enabl=1
+let g:WebDevIconsNerdTreeAfterGlyphPadding=' '
+
+" NERDCOMMENTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDSpaceDelims=1
+
+" VIM-GITGUTTER """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:gitgutter_enabled =1
+
+" AIRLINE """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline#extensions#tmuxline#enabled=0
+let g:airline_theme="powerlineish"
+" let g:airline_theme="hybridline"
+" let g:airline_theme="ravenpower"
+
 
