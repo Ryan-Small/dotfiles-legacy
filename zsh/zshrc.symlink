@@ -1,5 +1,6 @@
 # Create a shortcut to the dotfiles directory.
 export ZSH=$HOME/.dotfiles
+export TERM="xterm-256color"
 
 #
 # Bootstrap all of configurations.
@@ -46,6 +47,7 @@ unset config_files
 #
 
 # Get some color going.
+
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
